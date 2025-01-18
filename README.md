@@ -20,7 +20,7 @@ A real-time task management system designed for tracking tasks and subtasks amon
 ## Installation
 
 1. Clone the repository: `bash
-git clone [https://github.com/yourusername/task-tracker.git](https://github.com/HasanAbdelhady/tasks.git)
+git clone https://github.com/yourusername/task-tracker.git(https://github.com/HasanAbdelhady/tasks.git)
 cd task-tracker   `
 
 2. Create and activate a virtual environment: ```bash
