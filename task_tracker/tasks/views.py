@@ -61,8 +61,11 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['message'] = 'لا توجد مهام'
             return context
             
-        # Get current progress
-        subtasks = Subtask.objects.filter(task=active_task)
+        # Exclude superusers from subtasks query
+        subtasks = Subtask.objects.filter(
+            task=active_task,
+            assignee__is_superuser=False
+        )
         assignees = {}
         
         for subtask in subtasks:
@@ -161,11 +164,14 @@ class AllUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         task_data = []
 
         for task in tasks:
-            subtasks = Subtask.objects.filter(task=task)
+            # Exclude superusers from subtasks query
+            subtasks = Subtask.objects.filter(
+                task=task,
+                assignee__is_superuser=False
+            )
             assignee_data = {}
 
             for subtask in subtasks:
-                # Skip unassigned subtasks
                 if not subtask.assignee:
                     continue
                     
@@ -176,7 +182,7 @@ class AllUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 if subtask.completed:
                     assignee_data[username]['completed'] += 1
 
-            if assignee_data:  # Only add tasks that have assigned users
+            if assignee_data:
                 task_data.append({'task': task, 'assignees': assignee_data})
 
         # Add daily progress data

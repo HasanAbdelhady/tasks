@@ -19,9 +19,11 @@ A real-time task management system designed for tracking tasks and subtasks amon
 
 ## Installation
 
-1. Clone the repository: `bash
-git clone https://github.com/HasanAbdelhady/tasks.git
-cd task-tracker   `
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/HasanAbdelhady/tasks.git
+   cd tasks/task_tracker
+   ```
 
 2. Create and activate a virtual environment: ```bash
 
@@ -120,6 +122,11 @@ task_tracker/
   python manage.py delete_all_tasks
   ```
 
+- Delete all normal users:
+  ```bash
+  python manage.py delete_normal_users
+  ```
+
 ## Technical Details
 
 - **Task Updates**: Automatic page refresh every 5 seconds
@@ -147,45 +154,42 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 1. Sign up for a PythonAnywhere account at https://www.pythonanywhere.com/
 
 2. Open a Bash console from your PythonAnywhere dashboard and clone the repository:
-
    ```bash
-   git clone https://github.com/yourusername/task-tracker.git
+   git clone https://github.com/HasanAbdelhady/tasks.git
    ```
 
 3. Create and activate a virtual environment:
-
    ```bash
-   cd task-tracker
+   cd tasks
    python3 -m venv venv
    source venv/bin/activate
    ```
 
 4. Install dependencies:
-
    ```bash
    pip install -r requirements.txt
    ```
 
 5. Go to the "Web" tab in PythonAnywhere and:
-
    - Click "Add a new web app"
    - Choose "Manual Configuration"
    - Select Python version (3.8 or higher)
 
 6. Configure the virtual environment:
-
-   - In the "Virtualenv" section, enter: `/home/yourusername/task-tracker/venv`
+   - In the "Virtualenv" section, enter: `/home/yourusername/tasks/venv`
 
 7. Configure WSGI file:
-
    - Click on the WSGI configuration file link
    - Replace the contents with:
-
    ```python
    import os
    import sys
 
-   path = '/home/yourusername/task-tracker'
+   path = '/home/yourusername/tasks'
+   if path not in sys.path:
+       sys.path.append(path)
+
+   path = '/home/yourusername/tasks/task_tracker'
    if path not in sys.path:
        sys.path.append(path)
 
@@ -195,27 +199,18 @@ This project is licensed under the MIT License - see the LICENSE file for detail
    application = get_wsgi_application()
    ```
 
-8. Configure static files:
-
-   - In the "Static Files" section add:
-     - URL: `/static/`
-     - Directory: `/home/yourusername/task-tracker/static`
-
-9. Apply migrations and create superuser:
-
+8. Apply migrations and create superuser:
    ```bash
+   cd task_tracker
    python manage.py migrate
    python manage.py createsuperuser
    ```
 
 10. Update settings.py:
-
     - Add your domain to ALLOWED_HOSTS:
-
     ```python
     ALLOWED_HOSTS = ['yourusername.pythonanywhere.com']
     ```
-
     - Set DEBUG = False
 
 11. Reload your web app from the Web tab
