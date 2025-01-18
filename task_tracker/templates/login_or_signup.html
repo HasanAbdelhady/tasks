@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>الصفحة الرئيسية</title>
+    </head>
+    <body>
+        <h1>مرحباً بك في نظام إدارة المهام</h1>
+        <div
+            style="display: flex; justify-content: center; gap: 20px; margin-top: 50px;">
+            <a href="{% url 'login' %}"
+                style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">تسجيل
+                الدخول</a>
+            <a href="{% url 'signup' %}"
+                style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">إنشاء
+                حساب جديد</a>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}تسجيل الدخول{% endblock %}
+
+{% block content %}
+<h1>تسجيل الدخول</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <div class="error-message">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+    
+    <button type="submit">تسجيل الدخول</button>
+</form>
+
+<a href="{% url 'signup' %}" class="link">ليس لديك حساب؟ إنشاء حساب</a>
+{% endblock %}

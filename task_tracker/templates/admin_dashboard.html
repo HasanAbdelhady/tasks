@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة التحكم{% endblock %}
+
+{% block extra_head %}
+<meta http-equiv="refresh" content="5;url={% url 'admin_dashboard' %}">
+{% endblock %}
+
+{% block header_buttons %}
+<form action="{% url 'all_users' %}" method="get" style="margin: 0;">
+    <button type="submit">جميع الأفراد</button>
+</form>
+<form method="POST" style="margin: 0;">
+    {% csrf_token %}
+    <button type="submit" name="start_new_day" class="new-day-button">بدء يوم
+        جديد من المهام</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<h1>لوحة تحكم المسؤول</h1>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if message %}
+<div class="error-message">{{ message }}</div>
+{% else %}
+<!-- Current Task Section -->
+<section class="current-task">
+    <h2>المهمة الحالية: {{ task.name }}</h2>
+    {% if is_expired %}
+    <p style="text-align: center; color: #dc3545; font-weight: bold;">انتهت
+        المهمة</p>
+    {% endif %}
+    <p id="timer"
+        style="text-align: center; font-size: 2em; font-weight: bold; margin: 20px 0; color: #333;">
+        جارٍ حساب الوقت...
+    </p>
+
+    <div id="lastUpdate"
+        style="text-align: center; font-size: 0.8em; color: #666;">
+        آخر تحديث: <span id="updateTime"></span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>المستخدم</th>
+                <th>حالة المهام الفرعية</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignee, subtasks in assignees.items %}
+            <tr>
+                <td>{{ assignee }}</td>
+                <td>
+                    {% for completed in subtasks %}
+                    {% if completed %}
+                    ✔️
+                    {% else %}
+                    ❌
+                    {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<style>
+.new-day-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.new-day-button:hover {
+    background-color: #218838;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.current-task, .daily-progress {
+    margin-bottom: 30px;
+}
+</style>
+
+<!-- Existing timer script -->
+<script>
+    // Get the deadline from the server
+    const deadline = new Date("{{ task.deadline|date:'c' }}").getTime();
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const timeLeft = deadline - now;
+        
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        
+        const timerElement = document.getElementById('timer');
+        
+        if (timeLeft < 0) {
+            timerElement.innerHTML = "انتهى الوقت!";
+            timerElement.style.color = "#dc3545";  // Red color for expired
+        } else {
+            // Format the time remaining
+            let timeString = '';
+            if (minutes > 0) {
+                timeString += `${minutes} دقيقة `;
+            }
+            timeString += `${seconds} ثانية`;
+            
+            // Change color based on time remaining
+            if (minutes < 5) {
+                timerElement.style.color = "#dc3545";  // Red for last 5 minutes
+            } else if (minutes < 10) {
+                timerElement.style.color = "#ffc107";  // Yellow for last 10 minutes
+            }
+            
+            timerElement.innerHTML = `الوقت المتبقي: ${timeString}`;
+        }
+    }
+
+    // Update timer immediately and then every second
+    updateTimer();
+    setInterval(updateTimer, 1000);
+
+    // Force page refresh every 5 seconds
+    function refreshPage() {
+        window.location.href = "{% url 'admin_dashboard' %}";
+    }
+    setTimeout(refreshPage, 5000);
+
+    // Show last update time
+    function updateLastUpdateTime() {
+        const now = new Date();
+        document.getElementById('updateTime').textContent = 
+            now.getHours().toString().padStart(2, '0') + ':' +
+            now.getMinutes().toString().padStart(2, '0') + ':' +
+            now.getSeconds().toString().padStart(2, '0');
+    }
+    updateLastUpdateTime();
+</script>
+{% endif %}
+{% endblock %}
