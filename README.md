@@ -127,6 +127,11 @@ task_tracker/
   python manage.py delete_normal_users
   ```
 
+- Clear entire database (except superuser):
+  ```bash
+  python manage.py clear_database
+  ```
+
 ## Technical Details
 
 - **Task Updates**: Automatic page refresh every 5 seconds
