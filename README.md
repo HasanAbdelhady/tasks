@@ -141,3 +141,85 @@ task_tracker/
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Deployment on PythonAnywhere
+
+1. Sign up for a PythonAnywhere account at https://www.pythonanywhere.com/
+
+2. Open a Bash console from your PythonAnywhere dashboard and clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/task-tracker.git
+   ```
+
+3. Create and activate a virtual environment:
+
+   ```bash
+   cd task-tracker
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+4. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. Go to the "Web" tab in PythonAnywhere and:
+
+   - Click "Add a new web app"
+   - Choose "Manual Configuration"
+   - Select Python version (3.8 or higher)
+
+6. Configure the virtual environment:
+
+   - In the "Virtualenv" section, enter: `/home/yourusername/task-tracker/venv`
+
+7. Configure WSGI file:
+
+   - Click on the WSGI configuration file link
+   - Replace the contents with:
+
+   ```python
+   import os
+   import sys
+
+   path = '/home/yourusername/task-tracker'
+   if path not in sys.path:
+       sys.path.append(path)
+
+   os.environ['DJANGO_SETTINGS_MODULE'] = 'task_tracker.settings'
+
+   from django.core.wsgi import get_wsgi_application
+   application = get_wsgi_application()
+   ```
+
+8. Configure static files:
+
+   - In the "Static Files" section add:
+     - URL: `/static/`
+     - Directory: `/home/yourusername/task-tracker/static`
+
+9. Apply migrations and create superuser:
+
+   ```bash
+   python manage.py migrate
+   python manage.py createsuperuser
+   ```
+
+10. Update settings.py:
+
+    - Add your domain to ALLOWED_HOSTS:
+
+    ```python
+    ALLOWED_HOSTS = ['yourusername.pythonanywhere.com']
+    ```
+
+    - Set DEBUG = False
+
+11. Reload your web app from the Web tab
+
+Your app should now be live at `yourusername.pythonanywhere.com`
+
+Note: Replace `yourusername` with your actual PythonAnywhere username throughout these instructions.
