@@ -3,18 +3,25 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>الصفحة الرئيسية</title>
+        <title>الرئيسية</title>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
     </head>
     <body>
-        <h1>مرحباً بك في نظام إدارة المهام</h1>
-        <div
-            style="display: flex; justify-content: center; gap: 20px; margin-top: 50px;">
-            <a href="{% url 'login' %}"
-                style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">تسجيل
-                الدخول</a>
-            <a href="{% url 'signup' %}"
-                style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">إنشاء
-                حساب جديد</a>
+        <!-- Top Left Text -->
+        <div class="top-left-text">
+            <p>عميد أ ح /محمود هريدي<br>رئيس أركان الفرقة الثانية المشاة الميكانيكي</p>
+        </div>
+
+        <!-- Top Right Text -->
+        <div class="top-right-text">
+            <p>المنطقة المركزية العسكرية<br>الفرقة الثانية المشاة الميكانيكي<br>الفوج الثاني مهندسين عسكريين</p>
+        </div>
+
+        <!-- Main content below the text -->
+        <div class="main-content">
+            <h1>مرحباً بكم في نظام إدارة المهام</h1>
+            <a href="{% url 'login' %}">تسجيل الدخول</a> |
+            <a href="{% url 'signup' %}">إنشاء حساب جديد</a>
         </div>
     </body>
 </html>
