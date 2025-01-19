@@ -15,14 +15,15 @@
                 top: 10px;
                 font-size: 16px;
                 color: #333;
+                text-align: right; /* Ensure text aligns right for Arabic */
             }
             .left-corner {
                 left: 10px;
-                text-align: left;
+                text-align: left; /* Text aligns left for the left corner */
             }
             .right-corner {
                 right: 10px;
-                text-align: right;
+                text-align: right; /* Text aligns right for the right corner */
             }
             .container {
                 text-align: center;
@@ -49,9 +50,18 @@
         </style>
     </head>
     <body>
-        <!-- Left and Right corner texts -->
-        <div class="corner-text left-corner">نص في الزاوية اليسرى</div>
-        <div class="corner-text right-corner">نص في الزاوية اليمنى</div>
+        <!-- Left corner text -->
+        <div class="corner-text left-corner">
+            عميد أ ح /محمود هريدي
+            رئيس أركان الفرقة الثانية المشاة الميكانيكي
+        </div>
+
+        <!-- Right corner text -->
+        <div class="corner-text right-corner">
+            المنطقة المركزية العسكرية
+            الفرقة الثانية المشاة الميكانيكي
+            الفوج الثاني مهندسين عسكريين
+        </div>
 
         <div class="container">
             <h1>مرحباً بك في نظام إدارة المهام</h1>
