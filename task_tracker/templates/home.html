@@ -1,15 +1,85 @@
 <!DOCTYPE html>
+
 <html lang="ar">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>الرئيسية</title>
-    </head>
-    <body>
-        <h1>مرحباً بكم في نظام
-            إدارة
-            المهام</h1>
-        <a href="{% url 'login' %}">تسجيل الدخول</a> |
-        <a href="{% url 'signup' %}">إنشاء حساب جديد</a>
-    </body>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الرئيسية</title>
+
+    <style>
+
+        body {
+
+            position: relative;
+
+            text-align: center;
+
+        }
+
+        .top-left {
+
+            position: absolute;
+
+            top: 10px;
+
+            left: 10px;
+
+            text-align: right; /* Align text to the right */
+
+        }
+
+        .top-right {
+
+            position: absolute;
+
+            top: 10px;
+
+            right: 10px;
+
+            text-align: left; /* Align text to the left */
+
+        }
+
+        .title {
+
+            margin-top: 100px; /* Adjust margin to shift buttons down */
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="top-left">
+
+        <p>عميد أ ح /محمود هريدي</p>
+
+        <p>رئيس أركان الفرقة الثانية المشاة الميكانيكي</p>
+
+    </div>
+
+    <div class="top-right">
+
+        <p>المنطقة المركزية العسكرية</p>
+
+        <p>الفرقة الثانية المشاة الميكانيكي</p>
+
+        <p>الفوج الثاني مهندسين عسكريين</p>
+
+    </div>
+
+    <h1 class="title">مرحباً بكم في نظام<br>إدارة<br>المهام</h1>
+
+    <a href="{% url 'login' %}">تسجيل الدخول</a> |
+
+    <a href="{% url 'signup' %}">إنشاء حساب جديد</a>
+
+</body>
+
 </html>
