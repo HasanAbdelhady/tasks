@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merged Boxes Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        .progress-bar-container {
+            margin: 20px auto;
+            width: 300px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #049918ab;
+            width: 100%; /* Initially full width */
+            transition: width 0.1s linear; /* Smooth shrinking */
+        }
+
+        .time-box {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+
+        .text-section {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 columns */
+            gap: 20px;
+            padding: 20px;
+            justify-items: center;
+        }
+
+        .box {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            width: 150px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .box-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .box-description {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .merged-box {
+            grid-column: span 3; /* Spans across 3 columns */
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .merged-box-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .merged-box-description {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+    <script>
+        function startClockAndProgress(minutes) {
+            const timeBox = document.querySelector(".time-box");
+            const progressBar = document.querySelector(".progress-bar");
+    
+            const totalSeconds = minutes * 60; // Total time in seconds
+            let elapsedSeconds = 0;
+    
+            const interval = setInterval(() => {
+                // Update real-time clock
+                const now = new Date();
+                const formattedTime = now.toLocaleTimeString();
+                timeBox.textContent = `Current Time: ${formattedTime}`;
+    
+                // Update progress bar
+                elapsedSeconds++;
+                const progress = 100 - (elapsedSeconds / totalSeconds) * 100;
+                progressBar.style.width = `${progress}%`;
+    
+                // Stop the interval when the time is up
+                if (elapsedSeconds >= totalSeconds) {
+                    clearInterval(interval);
+                    progressBar.style.width = "0%"; // Set to 0% when finished
+                }
+            }, 1000); // Update every second
+        }
+    
+        window.onload = function () {
+            startClockAndProgress(2); // Replace '2' with your desired number of minutes
+        };
+    </script>
+</head>
+<body>
+    <!-- Time box -->
+    <div class="time-box"></div>
+
+    <!-- Text section -->
+    <div class="text-section">
+        (3 ساعات)الحالة الزائدة <br> 
+        (الحالة الأولى)تلقي الانذار
+    </div>
+
+    <!-- Progress bar below text -->
+    <div class="progress-bar-container">
+        <div class="progress-bar"></div>
+    </div>
+
+    <div class="grid-container">
+        <!-- Single boxes -->
+        <div class="box">
+            <div class="box-title">منوب عمليات</div>
+            <div class="box-description">المهمة</div>
+        </div>
+        <div class="box">
+            <div class="box-title">قائد الفوج</div>
+            <div class="box-description">مهمة</div>
+        </div>
+
+        <!-- Merged box spanning 3 columns -->
+        <div class="merged-box">
+            <div class="merged-box-title">قائدوا السرايا</div>
+            <div class="merged-box-description">المهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمةالمهمة</div>
+        </div>
+
+        <!-- More single boxes -->
+        <div class="box">
+            <div class="box-title">Box 6</div>
+            <div class="box-description">Description for Box 6.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 7</div>
+            <div class="box-description">Description for Box 7.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 8</div>
+            <div class="box-description">Description for Box 8.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 9</div>
+            <div class="box-description">Description for Box 9.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 10</div>
+            <div class="box-description">Description for Box 10.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 11</div>
+            <div class="box-description">Description for Box 11.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 12</div>
+            <div class="box-description">Description for Box 12.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 13</div>
+            <div class="box-description">Description for Box 13.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 14</div>
+            <div class="box-description">Description for Box 14.</div>
+        </div>
+        <div class="box">
+            <div class="box-title">Box 15</div>
+            <div class="box-description">Description for Box 15.</div>
+        </div>
+    </div>
+</body>
+</html>
