@@ -4,24 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>الرئيسية</title>
-        <link rel="stylesheet" href="{% static 'styles.css' %}">
     </head>
     <body>
-        <!-- Top Left Text -->
-        <div class="top-left-text">
-            <p>عميد أ ح /محمود هريدي<br>رئيس أركان الفرقة الثانية المشاة الميكانيكي</p>
-        </div>
-
-        <!-- Top Right Text -->
-        <div class="top-right-text">
-            <p>المنطقة المركزية العسكرية<br>الفرقة الثانية المشاة الميكانيكي<br>الفوج الثاني مهندسين عسكريين</p>
-        </div>
-
-        <!-- Main content below the text -->
-        <div class="main-content">
-            <h1>مرحباً بكم في نظام إدارة المهام</h1>
-            <a href="{% url 'login' %}">تسجيل الدخول</a> |
-            <a href="{% url 'signup' %}">إنشاء حساب جديد</a>
-        </div>
+        <h1>مرحباً بكم في نظام
+            إدارة
+            المهام</h1>
+        <a href="{% url 'login' %}">تسجيل الدخول</a> |
+        <a href="{% url 'signup' %}">إنشاء حساب جديد</a>
     </body>
 </html>
