@@ -105,7 +105,36 @@
 .current-task, .daily-progress {
     margin-bottom: 30px;
 }
+
+/* Corner Text Styles */
+.corner-text {
+    position: absolute;
+    top: 10px;
+    font-size: 16px;
+    color: #333;
+    text-align: right; /* Ensure text aligns right for Arabic */
+}
+.left-corner {
+    left: 10px;
+    text-align: left; /* Text aligns left for the left corner */
+}
+.right-corner {
+    right: 10px;
+    text-align: right; /* Text aligns right for the right corner */
+}
 </style>
+
+<!-- Left and Right corner text -->
+<div class="corner-text left-corner">
+    عميد أ ح /محمود هريدي<br>
+    رئيس أركان الفرقة الثانية المشاة الميكانيكي
+</div>
+
+<div class="corner-text right-corner">
+    المنطقة المركزية العسكرية<br>
+    الفرقة الثانية المشاة الميكانيكي<br>
+    الفوج الثاني مهندسين عسكريين
+</div>
 
 <!-- Existing timer script -->
 <script>
