@@ -1,346 +1,171 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    {% block extra_head %}{% endblock %}
-
-    <title>{% block title %}نظام إدارة المهام{% endblock %}</title>
-
-    <style>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% block extra_head %}{% endblock %}
+        <title>{% block title %}نظام إدارة المهام{% endblock %}</title>
+        <style>
         * {
-
             box-sizing: border-box;
-
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
         }
-
         
-
         body {
-
             margin: 0;
-
             padding: 20px;
-
             background-color: #f5f5f5;
-
             direction: rtl;
-
-            position: relative; /* Added for positioning of corner texts */
-
-            text-align: center; /* Center text for the body */
-
-            padding-top: 160px; /* Space for corner texts */
-
         }
-
         
-
         .container {
-
             max-width: 600px;
-
             margin: 0 auto;
-
             padding: 20px;
-
             background-color: white;
-
             border-radius: 8px;
-
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
         }
-
         
-
         .header {
-
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             margin-bottom: 20px;
-
         }
-
         
-
         h1 {
-
             color: #333;
-
             text-align: center;
-
             margin: 20px 0;
-
             width: 100%;
-
-            font-size: 36px; /* Increased font size for better visibility */
-
         }
-
         
-
         h2 {
-
             color: #333;
-
             text-align: center;
-
             margin-bottom: 20px;
-
         }
-
         
-
         .page-title {
-
             text-align: center;
-
             padding: 20px 0;
-
             margin: 0 auto;
-
             display: block;
-
             width: 100%;
-
         }
-
         
-
         form {
-
             display: flex;
-
             flex-direction: column;
-
             gap: 15px;
-
         }
-
         
-
         .form-group {
-
             display: flex;
-
             flex-direction: column;
-
             gap: 5px;
-
         }
-
         
-
         label {
-
             font-weight: bold;
-
             color: #555;
-
         }
-
         
-
         input[type="text"],
-
         input[type="password"],
-
         input[type="email"] {
-
             padding: 10px;
-
             border: 1px solid #ddd;
-
             border-radius: 4px;
-
             font-size: 16px;
-
         }
-
         
-
         button {
-
             padding: 10px 20px;
-
             background-color: #007bff;
-
             color: white;
-
             border: none;
-
             border-radius: 4px;
-
             cursor: pointer;
-
             font-size: 16px;
-
             transition: background-color 0.2s;
-
         }
-
         
-
         button:hover {
-
             background-color: #0056b3;
-
         }
-
         
-
         .error-message {
-
             color: #dc3545;
-
             text-align: center;
-
             margin-bottom: 15px;
-
         }
-
         
-
         .link {
-
             display: block;
-
             text-align: center;
-
             color: #007bff;
-
             text-decoration: none;
-
             margin-top: 15px;
-
         }
-
         
-
         .link:hover {
-
             text-decoration: underline;
-
         }
-
         
-
         table {
-
             width: 100%;
-
             border-collapse: collapse;
-
             margin-top: 20px;
-
         }
-
         
-
         th, td {
-
             padding: 12px;
-
             text-align: right;
-
             border: 1px solid #ddd;
-
         }
-
         
-
         th {
-
             background-color: #f8f9fa;
-
         }
-
         
-
         .checkbox-group {
-
             display: flex;
-
             align-items: center;
-
             gap: 10px;
-
         }
-
-
-        /* Corner texts */
-
-        .top-left {
-
-            position: absolute;
-
-            top: 10px;
-
-            left: 10px;
-
-            text-align: right; /* Align text to the right */
-
-        }
-
-
-        .top-right {
-
-            position: absolute;
-
-            top: 10px;
-
-            right: 10px;
-
-            text-align: left; /* Align text to the left */
-
-        }
-
-
+        
         @media (max-width: 768px) {
-
             .container {
-
                 padding: 15px;
-
             }
-
             
-
             button {
-
                 width: 100%;
-
             }
-
             
-
             .header {
-
                 flex-direction: column;
-
                 gap: 10px;
-
             }
-
         }
-
     </style>
+    </head>
+    <body>
+        <div class="container">
+            {% if user.is_authenticated %}
+            <div class="header">
+                {% block header_buttons %}{% endblock %}
+                <form action="{% url 'logout' %}" method="post"
+                    style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit">تسجيل الخروج</button>
+                </form>
+            </div>
+            {% endif %}
 
-</head>
-
-<body>
-
-    <
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>
