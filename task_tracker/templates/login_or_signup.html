@@ -9,6 +9,11 @@
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 margin: 0;
                 padding: 0;
+                height: 100vh; /* Make sure the body takes full height of the viewport */
+                display: flex;
+                justify-content: center; /* Horizontally center the content */
+                align-items: center; /* Vertically center the content */
+                flex-direction: column; /* Align items in a column */
             }
             .corner-text {
                 position: absolute;
@@ -64,7 +69,7 @@
         </div>
 
         <div class="container">
-            <h1>مرحباً بك في نظام إدارة المهام</h1>
+            <h1 class="title">متابعة الخطة الزمنية<br>لرفع حالة الاستعداد القتالي<br><br>الفوج الثاني المشاة الميكانيكي</h1>
             <div class="button-group">
                 <a href="{% url 'login' %}" class="login">تسجيل الدخول</a>
                 <a href="{% url 'signup' %}" class="signup">إنشاء حساب جديد</a>
