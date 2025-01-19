@@ -18,6 +18,10 @@
 
             text-align: center;
 
+            margin: 0; /* Remove default margin */
+
+            padding-top: 80px; /* Add padding to the top to create space for corner texts */
+
         }
 
         .top-left {
@@ -46,7 +50,27 @@
 
         .title {
 
-            margin-top: 10px; /* Adjust margin to shift buttons down */
+            margin-top: 20px; /* Adjust margin to create space below the title */
+
+            font-size: 24px; /* Increase font size for better visibility */
+
+        }
+
+        a {
+
+            display: inline-block; /* Make links block elements for better spacing */
+
+            margin: 10px; /* Add margin for spacing between links */
+
+            text-decoration: none; /* Remove underline from links */
+
+            color: #007BFF; /* Change link color */
+
+        }
+
+        a:hover {
+
+            text-decoration: underline; /* Underline on hover for better UX */
 
         }
 
