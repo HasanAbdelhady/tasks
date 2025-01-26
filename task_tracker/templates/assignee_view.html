@@ -3,61 +3,40 @@
 {% block title %}مهامي{% endblock %}
 
 {% block content %}
-<h1>مهامي</h1>
+<div class="container mx-auto p-4 bg-white shadow-md rounded-lg">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">مهامي</h1>
 
-{% if not current_task %}
-    <h2>اختر مهمة للعمل عليها</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {% for task in available_tasks %}
-        <div class="task-option">
-            <button type="submit" name="task_id" value="{{ task.id }}" class="task-select-button {% if task.deadline <= current_time %}expired{% endif %}">
-                {{ task.name }}
-                <small>
-                    {% if task.deadline <= current_time %}
-                        (منتهية)
-                    {% else %}
-                        (الموعد النهائي: {{ task.deadline|date:"Y-m-d H:i" }})
-                    {% endif %}
-                </small>
-            </button>
-        </div>
-        {% endfor %}
-    </form>
-{% else %}
-    <h2>المهمة الحالية: {{ current_task.name }}</h2>
-    {% if current_task.deadline <= current_time %}
-    <p style="text-align: center; color: #dc3545;">منتهية</p>
-    {% endif %}
-    <p>الموعد النهائي: {{ current_task.deadline|date:"Y-m-d H:i" }}</p>
+    <p>رتبتك: {{ rank }}</p>
 
-    <form method="POST">
+    {% if subtasks %}
+    <form method="POST" class="space-y-4">
         {% csrf_token %}
         {% for subtask in subtasks %}
-        <div class="checkbox-group">
-            <label>
-                {{ subtask.name }}:
-                <input type="checkbox" name="{{ subtask.id }}" {% if subtask.completed %}checked{% endif %}>
+        <div
+            class="flex items-center bg-gray-50 px-4 py-2 rounded-lg shadow-sm">
+            <input
+                type="checkbox"
+                name="subtask_ids"
+                value="{{ subtask.id }}"
+                id="subtask-{{ subtask.id }}"
+                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                {% if subtask.completed %} checked {% endif %} disabled>
+            <label for="subtask-{{ subtask.id }}"
+                class="ml-3 text-gray-700 text-lg">
+                {{ subtask.name }}
             </label>
         </div>
         {% endfor %}
-        <button type="submit">تحديث الحالة</button>
+        <button
+            type="submit"
+            class="w-full px-6 py-3 mt-6 bg-blue-600 text-white font-bold text-lg rounded-lg shadow-md hover:bg-blue-700">
+            تأكيد الإنجاز
+        </button>
     </form>
-
-    <form method="POST" style="margin-top: 20px;">
-        {% csrf_token %}
-        <button type="submit" name="task_id" value="" class="secondary-button">تغيير المهمة</button>
-    </form>
-{% endif %}
-
-<style>
-.expired {
-    background-color: #ffebee !important;
-    border-color: #dc3545 !important;
-}
-
-.expired small {
-    color: #dc3545;
-}
-</style>
+    {% else %}
+    <p class="text-center text-lg text-gray-600">
+        لا توجد مهام مخصصة لك في الوقت الحالي.
+    </p>
+    {% endif %}
+</div>
 {% endblock %}

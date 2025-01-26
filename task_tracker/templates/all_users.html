@@ -3,78 +3,41 @@
 {% block title %}جميع الأفراد{% endblock %}
 
 {% block header_buttons %}
-<form action="{% url 'admin_dashboard' %}" method="get" style="margin: 0;">
-    <button type="submit">🔙</button>
-</form>
+<div class="flex justify-end mb-6">
+    <form action="{% url 'admin_dashboard' %}" method="get">
+        <button type="submit"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            🔙 العودة للوحة التحكم
+        </button>
+    </form>
+</div>
 {% endblock %}
 
 {% block content %}
-<h1>جميع الأفراد والمهام</h1>
+<h1>جميع الأفراد</h1>
 
-{% for task_data in tasks %}
-<h2>المهمة: {{ task_data.task.name }}</h2>
 <table>
     <thead>
         <tr>
-            <th>اسم المستخدم</th>
-            <th>المهام الفرعية المكتملة</th>
-            <th>إجمالي المهام الفرعية</th>
+            <th>الرتبة</th>
+            <th>حالة المهام</th>
         </tr>
     </thead>
     <tbody>
-        {% for assignee, data in task_data.assignees.items %}
+        {% for profile in user_profiles %}
         <tr>
-            <td>{{ assignee }}</td>
-            <td>{{ data.completed }}</td>
-            <td>{{ data.total }}</td>
+            <td>{{ profile.rank }}</td>
+            <td>
+                {% for subtask in profile.user.subtask_set.all %}
+                {% if subtask.completed %}
+                ✔️
+                {% else %}
+                ❌
+                {% endif %}
+                {% endfor %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-{% endfor %}
-
-<!-- Daily Progress History -->
-<section class="daily-progress">
-    <h2>سجل التقدم اليومي</h2>
-    {% for date, progress_list in daily_progress.items %}
-    <div class="daily-progress-card">
-        <h3>{{ date }}</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>المستخدم</th>
-                    <th>المهمة</th>
-                    <th>التقدم</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for progress in progress_list %}
-                <tr>
-                    <td>{{ progress.user }}</td>
-                    <td>{{ progress.task }}</td>
-                    <td>{{ progress.completed }}/{{ progress.total }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endfor %}
-</section>
-
-<style>
-.daily-progress-card {
-    margin: 20px 0;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-}
-
-.daily-progress-card h3 {
-    margin-top: 0;
-    color: #666;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-}
-</style>
 {% endblock %}

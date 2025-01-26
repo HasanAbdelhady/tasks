@@ -3,28 +3,54 @@
 {% block title %}تسجيل الدخول{% endblock %}
 
 {% block content %}
-<h1>تسجيل الدخول</h1>
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">تسجيل الدخول</h1>
 
-<form method="POST">
-    {% csrf_token %}
-    {% for field in form %}
-    <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-        <div class="error-message">
-            {{ field.errors }}
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="flex flex-col space-y-1">
+            <label for="{{ field.id_for_label }}" class="text-sm font-semibold text-gray-600">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            <style>
+                #{{ field.id_for_label }} {
+                    width: 100%;
+                    padding: 0.5rem 1rem;
+                    border: 1px solid #d1d5db; /* Tailwind border-gray-300 */
+                    border-radius: 0.5rem; /* Tailwind rounded-lg */
+                    outline: none;
+                    transition: border-color 0.3s, box-shadow 0.3s;
+                }
+                #{{ field.id_for_label }}:focus {
+                    border-color: #3b82f6; /* Tailwind blue-500 */
+                    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); /* Tailwind focus:ring-2 */
+                }
+            </style>
+            {% if field.errors %}
+            <div class="text-red-500 text-sm">
+                {{ field.errors }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if error %}
+        <div class="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm">
+            {{ error }}
         </div>
         {% endif %}
-    </div>
-    {% endfor %}
-    
-    {% if error %}
-    <div class="error-message">{{ error }}</div>
-    {% endif %}
-    
-    <button type="submit">تسجيل الدخول</button>
-</form>
 
-<a href="{% url 'signup' %}" class="link">ليس لديك حساب؟ إنشاء حساب</a>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            تسجيل الدخول
+        </button>
+    </form>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'signup' %}" class="text-blue-600 hover:underline">
+            ليس لديك حساب؟ إنشاء حساب
+        </a>
+    </div>
+</div>
 {% endblock %}

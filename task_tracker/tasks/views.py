@@ -1,85 +1,115 @@
+from accounts.models import UserProfile
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.utils.timezone import now
+from django.utils.timezone import now, timedelta
 from django.views.generic import TemplateView, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Task, Subtask, DailyProgress
 from django.contrib import messages
-from django.db.models import Q
-from datetime import timedelta
-from django.utils import timezone
+from .models import Task, Subtask, DailyProgress
+
 
 class HomeView(RedirectView):
     template_name = 'home.html'
-    
+
     def get_redirect_url(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             if self.request.user.is_staff:
                 return '/admin-dashboard/'  # Use reverse_lazy in production
             return '/assignee-view/'
         return None
-    
+
     def get(self, request, *args, **kwargs):
         url = self.get_redirect_url(*args, **kwargs)
         if url:
             return redirect(url)
         return render(request, self.template_name)
 
+
 class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'admin_dashboard.html'
-    
+
     def test_func(self):
         return self.request.user.is_staff
-    
+
     def post(self, request, *args, **kwargs):
         if 'start_new_day' in request.POST:
-            # Store yesterday's progress (if any) in DailyProgress
-            yesterday = timezone.now().date() - timedelta(days=1)
+            yesterday = now().date() - timedelta(days=1)
             subtasks = Subtask.objects.filter(assignee__isnull=False)
-            
-            # Reset all subtask progress
+
+            # Reset subtask completion status
             subtasks.update(completed=False)
-            
-            # Reset all task deadlines to today + their original duration
+
+            # Reset task deadlines
             for task in Task.objects.all():
-                minutes_to_add = (task.id % 11 + 1) * 10  # Same logic as create_sample_tasks
-                task.deadline = timezone.now() + timedelta(minutes=minutes_to_add)
+                minutes_to_add = (task.id % 11 + 1) * 10
+                task.deadline = now() + timedelta(minutes=minutes_to_add)
                 task.save()
-            
-            messages.success(request, 'تم بدء يوم جديد بنجاح')
+
+            # Archive daily progress
+            for subtask in subtasks:
+                progress, created = DailyProgress.objects.get_or_create(
+                    date=yesterday,
+                    task=subtask.task,
+                    assignee=subtask.assignee,
+                    defaults={
+                        'completed_subtasks': 0,
+                        'total_subtasks': 0,
+                    }
+                )
+                progress.completed_subtasks = Subtask.objects.filter(
+                    task=subtask.task, assignee=subtask.assignee, completed=True
+                ).count()
+                progress.total_subtasks = Subtask.objects.filter(
+                    task=subtask.task, assignee=subtask.assignee
+                ).count()
+                progress.save()
+
+            messages.success(request, 'تم بدء يوم جديد بنجاح.')
             return redirect('admin_dashboard')
         return super().post(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        current_time = timezone.now()
-        
-        # Get current task data
+        current_time = now()
+
+        # Fetch the most urgent task
         active_task = Task.objects.order_by('deadline').first()
-        
         if not active_task:
             context['message'] = 'لا توجد مهام'
             return context
-            
-        # Exclude superusers from subtasks query
+
+        # Fetch subtasks and group them by assignees
         subtasks = Subtask.objects.filter(
-            task=active_task,
-            assignee__is_superuser=False
+            task=active_task, assignee__is_superuser=False
         )
         assignees = {}
-        
         for subtask in subtasks:
-            if not subtask.assignee:
-                continue
-            username = subtask.assignee.username
-            if username not in assignees:
-                assignees[username] = []
-            assignees[username].append(subtask.completed)
-        
-        # Get daily progress history
+            if subtask.assignee:
+                username = subtask.assignee.username
+                if username not in assignees:
+                    assignees[username] = []
+                assignees[username].append({
+                    'subtask': subtask.name,
+                    'completed': subtask.completed
+                })
+
+        # Fetch user profiles and their assigned subtasks
+        user_profiles = UserProfile.objects.select_related(
+            'user', 'subtask'
+        ).all()
+        profiles_data = [
+            {
+                'username': profile.user.username,
+                'rank': profile.rank,
+                'subtask': profile.subtask.name if profile.subtask else None,
+                'task': profile.subtask.task.name if profile.subtask else None,
+                'completed': profile.subtask.completed if profile.subtask else False,
+            }
+            for profile in user_profiles
+        ]
+
+        # Fetch daily progress history
         daily_progress = DailyProgress.objects.all().order_by('-date')
         progress_by_date = {}
-        
         for progress in daily_progress:
             date_str = progress.date.strftime('%Y-%m-%d')
             if date_str not in progress_by_date:
@@ -90,91 +120,64 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 'completed': progress.completed_subtasks,
                 'total': progress.total_subtasks
             })
-            
+
+        # Update the context
         context.update({
             'task': active_task,
             'assignees': assignees,
+            'user_profiles': profiles_data,
             'time_remaining': active_task.deadline - current_time,
             'is_expired': active_task.deadline <= current_time,
-            'daily_progress': progress_by_date
+            'daily_progress': progress_by_date,
         })
         return context
+
 
 class AssigneeView(LoginRequiredMixin, TemplateView):
     template_name = 'assignee_view.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        current_time = now()
-        
-        # Get all active tasks
-        active_tasks = Task.objects.filter(deadline__gt=current_time).order_by('deadline')
-        
-        # Get the user's current task (if any)
-        user_subtasks = Subtask.objects.filter(assignee=self.request.user).first()
-        current_task = user_subtasks.task if user_subtasks else None
-        
+
+        # Fetch all subtasks assigned to the current user
+        subtasks = Subtask.objects.filter(assignee=self.request.user)
+
         context.update({
-            'available_tasks': active_tasks,
-            'current_task': current_task,
-            'subtasks': Subtask.objects.filter(task=current_task, assignee=self.request.user) if current_task else None
+            'subtasks': subtasks,
         })
         return context
-    
+
     def post(self, request, *args, **kwargs):
-        task_id = request.POST.get('task_id')
-        
-        if task_id == '':
-            # User wants to unassign from current task
-            Subtask.objects.filter(assignee=request.user).update(assignee=None, completed=False)
-            return redirect('assignee_view')
-            
-        if task_id:
-            # User is selecting a new task
-            try:
-                # First, unassign from any current tasks
-                Subtask.objects.filter(assignee=request.user).update(assignee=None, completed=False)
-                
-                # Then assign to the new task
-                new_task = Task.objects.get(id=task_id)
-                subtasks = Subtask.objects.filter(task=new_task)
-                for subtask in subtasks:
-                    subtask.assignee = request.user
-                    subtask.save()
-            except Task.DoesNotExist:
-                pass  # Handle invalid task_id gracefully
-        else:
-            # User is updating subtask status
-            current_subtasks = Subtask.objects.filter(assignee=request.user)
-            for subtask in current_subtasks:
-                subtask.completed = str(subtask.id) in request.POST
-                subtask.save()
-                
+        # Handle subtask completion
+        for subtask in Subtask.objects.filter(assignee=request.user):
+            subtask.completed = str(subtask.id) in request.POST
+            subtask.save()
+
+        messages.success(request, "تم تحديث حالة المهام بنجاح.")
         return redirect('assignee_view')
+
 
 class AllUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'all_users.html'
-    
+
     def test_func(self):
         return self.request.user.is_staff
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tasks = Task.objects.all()
         task_data = []
 
         for task in tasks:
-            # Exclude superusers from subtasks query
             subtasks = Subtask.objects.filter(
-                task=task,
-                assignee__is_superuser=False
+                task=task, assignee__is_superuser=False
             )
             assignee_data = {}
 
             for subtask in subtasks:
                 if not subtask.assignee:
                     continue
-                    
+
                 username = subtask.assignee.username
                 if username not in assignee_data:
                     assignee_data[username] = {'total': 0, 'completed': 0}
@@ -188,7 +191,6 @@ class AllUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Add daily progress data
         daily_progress = DailyProgress.objects.all().order_by('-date')
         progress_by_date = {}
-        
         for progress in daily_progress:
             date_str = progress.date.strftime('%Y-%m-%d')
             if date_str not in progress_by_date:
@@ -200,6 +202,8 @@ class AllUsersView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 'total': progress.total_subtasks
             })
 
-        context['tasks'] = task_data
-        context['daily_progress'] = progress_by_date
+        context.update({
+            'tasks': task_data,
+            'daily_progress': progress_by_date,
+        })
         return context
